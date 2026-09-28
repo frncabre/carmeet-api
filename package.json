@@ -1,0 +1,24 @@
+{
+  "name": "carmeet-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env app.js",
+    "dev": "node --watch --env-file-if-exists=.env app.js",
+    "test": "node --test tests/*.test.mjs",
+    "meli:authorize": "node --env-file-if-exists=.env scripts/meli-oauth.mjs authorize",
+    "meli:exchange": "node --env-file-if-exists=.env scripts/meli-oauth.mjs exchange",
+    "meli:refresh": "node --env-file-if-exists=.env scripts/meli-oauth.mjs refresh",
+    "meli:status": "node --env-file-if-exists=.env scripts/meli-oauth.mjs status"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}
