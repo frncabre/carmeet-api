@@ -67,7 +67,13 @@ function createRouter({ config = process.env, fetchImpl = fetch, envPath } = {})
         const { validRequest, catalog } = await modules;
         if (!validRequest(req.body)) return res.status(400).json({ error: 'Consulta de catálogo inválida.' });
         try { res.json(await catalog.query(req.body)); }
-        catch { res.status(503).json({ error: 'El catálogo no está disponible. Revisá la autorización de Mercado Libre en la API.' }); }
+        catch (error) {
+            const reauthorize = error.code === 'MELI_REAUTH_REQUIRED';
+            res.status(503).json({
+                error: reauthorize ? error.message : 'El catálogo no está disponible. Revisá la autorización de Mercado Libre en la API.',
+                ...(reauthorize ? { code: error.code } : {}),
+            });
+        }
     });
 
     router.get('/health', (req, res) => {

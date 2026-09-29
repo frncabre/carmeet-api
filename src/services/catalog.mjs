@@ -17,8 +17,15 @@ export function createCatalog({ envPath = defaultEnvPath, fetchImpl = fetch } = 
   }
   async function accessToken(rejectedToken) {
     let { values } = await readConfig(envPath)
-    const expired = !Number.isFinite(Date.parse(values.MELI_EXPIRES_AT)) || Date.parse(values.MELI_EXPIRES_AT) <= Date.now() + 60000
+    const expiresAt = Date.parse(values.MELI_EXPIRES_AT)
+    // Imported tokens may have no issuance date. Try them before refreshing.
+    const expired = Number.isFinite(expiresAt) && expiresAt <= Date.now() + 60000
     if (!values.MELI_ACCESS_TOKEN || (rejectedToken ? values.MELI_ACCESS_TOKEN === rejectedToken : expired)) {
+      if (!values.MELI_REFRESH_TOKEN) {
+        const error = new Error('La autorización de Mercado Libre venció o fue rechazada y no hay refresh token. Volvé a autorizar la aplicación.')
+        error.code = 'MELI_REAUTH_REQUIRED'
+        throw error
+      }
       await refresh()
       values = (await readConfig(envPath)).values
     }

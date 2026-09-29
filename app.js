@@ -27,9 +27,11 @@ function createApp(options = {}) {
     });
     return app;
 }
+const app = createApp();
 if (require.main === module) {
-    createApp().listen(process.env.PORT || 3000, '0.0.0.0', () => {
+    app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
         console.log('CarMeet API escuchando en el puerto ' + (process.env.PORT || 3000));
     });
 }
-module.exports = { createApp };
+module.exports = app;
+module.exports.createApp = createApp;
